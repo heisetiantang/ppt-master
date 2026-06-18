@@ -131,7 +131,7 @@ class ProjectManager:
                 f"(available: {available}; common alias: xhs -> xiaohongshu)"
             )
 
-        date_str = datetime.now().strftime("%Y%m%d")
+        date_str = datetime.now().strftime("%Y%m%d-%H%M%S")
         project_dir_name = f"{project_name}_{normalized_format}_{date_str}"
         project_path = base_path / project_dir_name
 

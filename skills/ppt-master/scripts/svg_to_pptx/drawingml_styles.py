@@ -153,6 +153,7 @@ def build_pattern_fill(
 
     fg_color = pattern_elem.get('data-pptx-fg')
     bg_color = pattern_elem.get('data-pptx-bg')
+    has_explicit_bg = bg_color is not None
 
     if not fg_color or not bg_color:
         # Hand-authored fallback: derive from child elements.
@@ -160,6 +161,7 @@ def build_pattern_fill(
             tag = child.tag.replace(f'{{{SVG_NS}}}', '')
             if tag == 'rect' and not bg_color:
                 bg_color = child.get('fill')
+                has_explicit_bg = bg_color is not None
             elif tag == 'path' and not fg_color:
                 fg_color = child.get('stroke')
 
@@ -168,11 +170,29 @@ def build_pattern_fill(
     if not fg_hex:
         return ''
 
-    alpha_xml = ''
-    if opacity is not None and opacity < 1.0:
-        alpha_xml = f'<a:alpha val="{int(opacity * 100000)}"/>'
+    if not has_explicit_bg:
+        return ''
 
-    fg_xml = f'<a:srgbClr val="{fg_hex}">{alpha_xml}</a:srgbClr>'
+    # PowerPoint ignores alpha on pattern fills; bake opacity into fg color
+    if opacity is not None and opacity < 1.0:
+        # Blend fg color onto bg color: result = fg*opacity + bg*(1-opacity)
+        r = int(fg_hex[0:2], 16)
+        g = int(fg_hex[2:4], 16)
+        b = int(fg_hex[4:6], 16)
+        if bg_hex:
+            br = int(bg_hex[0:2], 16)
+            bg = int(bg_hex[2:4], 16)
+            bb = int(bg_hex[4:6], 16)
+        else:
+            br = bg = bb = 255
+        blended = (
+            int(round(r * opacity + br * (1.0 - opacity))),
+            int(round(g * opacity + bg * (1.0 - opacity))),
+            int(round(b * opacity + bb * (1.0 - opacity))),
+        )
+        fg_hex = f'{blended[0]:02X}{blended[1]:02X}{blended[2]:02X}'
+
+    fg_xml = f'<a:srgbClr val="{fg_hex}"/>'
     if bg_hex:
         bg_xml = f'<a:srgbClr val="{bg_hex}"/>'
     else:

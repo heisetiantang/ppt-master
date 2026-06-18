@@ -81,7 +81,7 @@ Defined in the Design Specification & Content Outline; each image carries an `Ac
 | `href` | Image path (relative or absolute) | `"../images/cover.png"` |
 | `x`, `y` | Image top-left corner position | `x="0" y="0"` |
 | `width`, `height` | Image display dimensions | `width="1280" height="720"` |
-| `preserveAspectRatio` | Scaling mode | `"xMidYMid slice"` |
+| `preserveAspectRatio` | Scaling mode | `"xMidYMid meet"` for content images, `"xMidYMid slice"` only for decorative backgrounds |
 
 ### preserveAspectRatio Common Values
 
@@ -90,6 +90,8 @@ Defined in the Design Specification & Content Outline; each image carries an `Ac
 | `xMidYMid slice` | Center crop (similar to CSS `cover`) |
 | `xMidYMid meet` | Complete display (similar to CSS `contain`) |
 | `none` | Stretch to fill, no aspect ratio preservation |
+
+Default to `xMidYMid meet` for screenshots, architecture diagrams, charts, tables, flow diagrams, UI captures, and other content-bearing images. First resize the visual slot or accept matte/whitespace; crop only when the image is decorative or explicitly designed as a background/hero crop.
 
 ### Preview Method
 

@@ -325,7 +325,11 @@ Handle images by their status in the Design Spec's Image Resource List. Status e
 
 **Placeholder**: Dashed border `<rect stroke-dasharray="8,4" .../>` + description text
 
-**`no-crop` images**: when a `spec_lock.md images` entry ends with ` | no-crop`, size the container to the image's native ratio (from `analyze_images.py` or file dims) and use `preserveAspectRatio="xMidYMid meet"`. Untagged entries are croppable — default to `slice`.
+**Image fitting default**: content-bearing images (screenshots, architecture diagrams, charts, tables, flow diagrams, UI captures, model-output panels, or any image whose details must be read) MUST preserve the full image. Size the container to the image's native ratio when possible and use `preserveAspectRatio="xMidYMid meet"`. If the intended slot is too wide/tall, shrink the image and use surrounding whitespace, a dark matte, caption, or nearby text; do not crop away information.
+
+**Cropping exception**: use `preserveAspectRatio="xMidYMid slice"` only for decorative or atmospheric images where losing edges is acceptable: full-bleed covers, hero backgrounds, section backdrops, abstract texture bands, or explicitly marked croppable photos. Cropping is the fallback after resizing fails, not the default.
+
+**`no-crop` images**: when a `spec_lock.md images` entry ends with ` | no-crop`, size the container to the image's native ratio (from `analyze_images.py` or file dims) and use `preserveAspectRatio="xMidYMid meet"`. Treat untagged content-bearing images as no-crop by default; only decorative imagery is croppable.
 
 **Formula images**: rows with `Acquire Via: formula` or `Type: Latex Formula` MUST be treated as no-crop even if a legacy `spec_lock.md` forgot the flag. Use the dimensions from `design_spec.md §VIII`, `image_analysis.csv`, or `images/formula_manifest.json`; do not normalize all formulas to one height unless the spec explicitly states that layout choice.
 
